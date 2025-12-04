@@ -1,5 +1,6 @@
 package org.example.san_pham.config;
 
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.BeansException;
@@ -18,10 +19,8 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
@@ -30,11 +29,12 @@ import org.thymeleaf.templatemode.TemplateMode;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+@EnableTransactionManagement
 @Configuration
 @EnableWebMvc
-@EnableTransactionManagement
-@ComponentScan("org.example")
-public class AppConfiguration implements ApplicationContextAware, WebMvcConfigurer {
+@ComponentScan("org.example.san_pham")
+public class AppConfiguration implements WebMvcConfigurer, ApplicationContextAware {
+
     private ApplicationContext applicationContext;
 
     @Override
@@ -72,7 +72,6 @@ public class AppConfiguration implements ApplicationContextAware, WebMvcConfigur
         return viewResolver;
     }
 
-
     // config file message
     @Bean
     public MessageSource messageSource() {
@@ -82,7 +81,7 @@ public class AppConfiguration implements ApplicationContextAware, WebMvcConfigur
         return messageSource;
     }
 
-//    // JPA
+    // JPA
     @Bean
     @Qualifier(value = "entityManager")
     public EntityManager entityManager(EntityManagerFactory entityManagerFactory) {
@@ -104,17 +103,16 @@ public class AppConfiguration implements ApplicationContextAware, WebMvcConfigur
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/blog_management?createDatabaseIfNotExist=true&useSSL=false");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/m4_spring66_jpa?createDatabaseIfNotExist=true&useSSL=false");
         dataSource.setUsername("root");
-        dataSource.setPassword("codegym");
+        dataSource.setPassword("Codegym123");
         return dataSource;
     }
-
     Properties additionalProperties() {
         Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", "update");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
-        properties.setProperty("show_sql", "false");
+        properties.setProperty("show_sql", "true");
         return properties;
     }
 
@@ -124,4 +122,7 @@ public class AppConfiguration implements ApplicationContextAware, WebMvcConfigur
         transactionManager.setEntityManagerFactory(emf);
         return transactionManager;
     }
+
+
+
 }

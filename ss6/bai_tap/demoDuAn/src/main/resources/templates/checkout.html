@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tính Phí Vận Chuyển</title>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    #map { height: 350px; width: 100%; margin-top: 10px; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Tính Phí Vận Chuyển</h2>
+  <form action="/" method="post">
+    <label for="addressInput">Địa chỉ nhận hàng:</label>
+    <input type="text" id="addressInput" name="address" required style="width: 70%;" />
+    <button type="button" onclick="searchAddress()">Tìm trên bản đồ</button>
+
+    <div id="map"></div>
+
+    <input type="hidden" name="latitude" id="lat" required>
+    <input type="hidden" name="longitude" id="lng" required>
+
+    <p style="margin-top: 15px;">
+      <button type="submit">Xác nhận và Tính Phí</button>
+    </p>
+  </form>
+</div>
+
+<script>
+  var map = L.map('map').setView([10.776889, 106.700806], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+  var marker;
+
+  function searchAddress() {
+    let address = document.getElementById("addressInput").value;
+    if (!address) {
+      alert("Vui lòng nhập địa chỉ!");
+      return;
+    }
+
+    // Gọi API Nominatim để tìm tọa độ
+    let url = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(address);
+
+    fetch(url)
+            .then(response => response.json())
+            .then(data => {
+              if (data.length === 0) {
+                alert("Không tìm thấy địa chỉ. Vui lòng thử lại với tên địa điểm rõ ràng hơn.");
+                return;
+              }
+
+              let lat = parseFloat(data[0].lat);
+              let lon = parseFloat(data[0].lon);
+
+              // Gán vào hidden input để gửi về server
+              document.getElementById("lat").value = lat;
+              document.getElementById("lng").value = lon;
+
+              // Cập nhật map và marker
+              if (marker) map.removeLayer(marker);
+              marker = L.marker([lat, lon]).addTo(map);
+
+              map.setView([lat, lon], 16);
+              alert(`Đã tìm thấy: ${data[0].display_name}. Tọa độ đã được lưu.`);
+            })
+            .catch(error => {
+              console.error('Lỗi khi tìm kiếm địa chỉ:', error);
+              alert('Lỗi kết nối khi tìm kiếm địa chỉ.');
+            });
+  }
+</script>
+</body>
+</html>

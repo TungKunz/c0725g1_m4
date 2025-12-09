@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Kết Quả Tính Phí</title>
+  <style>
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; }
+    .result-box { border: 2px solid #007bff; padding: 20px; background-color: #f8f9fa; }
+    .highlight { font-weight: bold; color: #dc3545; font-size: 1.2em; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>🎉 Kết Quả Tính Phí Vận Chuyển</h2>
+  <div class="result-box">
+    <p><strong>Địa chỉ nhận hàng:</strong> <span th:text="${address}"></span></p>
+    <p><strong>Khoảng cách (km):</strong> <span th:text="${#numbers.formatDecimal(distance, 1, 2)}"></span> km</p>
+    <p><strong>Phí Vận Chuyển:</strong> <span class="highlight" th:text="${#numbers.formatDecimal(fee, 0, 'POINT', 0, 'COMMA') + ' VND'}"></span></p>
+  </div>
+  <p style="margin-top: 20px;">
+    <a href="/">Quay lại trang tính phí</a>
+  </p>
+</div>
+</body>
+</html>

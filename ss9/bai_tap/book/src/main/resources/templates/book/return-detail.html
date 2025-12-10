@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Xác Nhận Trả Sách</title>
+</head>
+<body>
+<h2>Xác Nhận Trả Sách</h2>
+
+<p style="color: red;" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+<h3>Thông tin Thẻ Mượn</h3>
+<table>
+    <tr>
+        <td>Mã Mượn (Code):</td>
+        <td th:text="${borrowingCard.code}"></td>
+    </tr>
+</table>
+
+<h3>Thông tin Sách</h3>
+<table>
+    <tr>
+        <td>ID Sách:</td>
+        <td th:text="${book.id}"></td>
+    </tr>
+    <tr>
+        <td>Tên Sách:</td>
+        <td th:text="${book.title}"></td>
+    </tr>
+    <tr>
+        <td>Tác giả:</td>
+        <td th:text="${book.author}"></td>
+    </tr>
+</table>
+
+<hr/>
+
+<form th:action="@{/return/confirm}" method="post">
+    <input type="hidden" name="borrowCode" th:value="${borrowingCard.code}" />
+
+    <p>Bạn có chắc chắn muốn xác nhận trả sách này không?</p>
+    <button type="submit" style="background-color: green; color: white; padding: 10px;">XÁC NHẬN TRẢ SÁCH</button>
+</form>
+
+<p><a th:href="@{/return}">Quay lại trang nhập mã</a></p>
+</body>
+</html>

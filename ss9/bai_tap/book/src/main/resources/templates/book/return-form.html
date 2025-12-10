@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trả Sách</title>
+</head>
+<body>
+<h2>Nhập Mã Mượn Để Trả Sách</h2>
+
+<p style="color: red;" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+<form th:action="@{/return/search}" method="post" th:object="${borrowingCard}">
+    <label for="code">Mã Mượn:</label>
+    <input type="text" id="code" th:field="*{code}" required/>
+    <button type="submit">Tìm kiếm và Xác nhận</button>
+</form>
+
+<p><a th:href="@{/book}">Quay lại Danh sách sách</a></p>
+</body>
+</html>

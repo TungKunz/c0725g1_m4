@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Sách Đang Mượn</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .container { margin-top: 30px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1 class="mb-4">🔖 Danh Sách Sách Đang Mượn</h1>
+  <p><a href="/book">Quay lại danh sách sách</a> | <a href="/return">Đi tới trang Trả Sách</a></p>
+  <hr>
+
+  <div th:if="${error}" class="alert alert-danger">
+    ❌ <span th:text="${error}"></span>
+  </div>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>STT</th>
+      <th>Mã Mượn (Code)</th>
+      <th>Tiêu đề Sách</th>
+      <th>Tác giả</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="card,status:${cardPage.content}">
+      <td th:text="${status.count}"></td>
+      <td th:text="${card.code}"></td>
+      <td th:text="${card.book.title}"></td>
+      <td th:text="${card.book.author}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination-controls text-center">
+    <a th:if="${cardPage.hasPrevious()}"
+       th:href="@{/book-borrow(page=${cardPage.number - 1}, size=${cardPage.size}, searchName=${searchName})}"
+       class="btn btn-info">Trước</a>
+
+    <span class="mx-3">Trang <span th:text="${cardPage.number + 1}"></span> / <span th:text="${cardPage.totalPages}"></span></span>
+
+    <a th:if="${cardPage.hasNext()}"
+       th:href="@{/book-borrow(page=${cardPage.number + 1}, size=${cardPage.size}, searchName=${searchName})}"
+       class="btn btn-info">Sau</a>
+  </div>
+</div>
+
+</body>
+</html>

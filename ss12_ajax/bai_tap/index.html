@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery-3.6.0.js"></script>
+
+</head>
+<body>
+
+<select id="categoryId">
+    <option value="">-- Chọn category --</option>
+</select>
+<h2>Danh sách sinh viên</h2>
+
+<table>
+    <thead>
+    <tr>
+        <td>STT</td>
+        <td>content</td>
+        <td>detail</td>
+        <td>name category</td>
+    </tr>
+    </thead>
+    <tbody id="content"></tbody>
+</table>
+
+<button id="btnMore" type="button">More</button>
+<span id="info"></span>
+
+
+
+<script>
+    $(document).ready(function () {
+        let page = 0;
+        const size = 5;
+        let loading = false;
+
+        function loadMore() {
+            if (loading) return;
+            loading = true;
+            $("#btnMore").prop("disabled", true).text("Loading...");
+
+            $.ajax({
+                url: "http://localhost:8080/api/v1/blogs",
+                method: "GET",
+                dataType: "json",
+                data: { page: page, size: size }, // <-- gửi phân trang
+                success: function (data) {
+                    const base = (data.number ?? page) * (data.size ?? size);
+
+                    const rows = (data.content || []).map((blog, i) => `
+            <tr>
+              <td>${base + i + 1}</td>
+              <td>${blog.content ?? ""}</td>
+              <td>${blog.detail ?? ""}</td>
+              <td>${blog.category?.name ?? ""}</td>
+            </tr>
+          `).join("");
+
+                    $("#content").append(rows);
+
+                    $("#info").text(` Page ${data.number + 1}/${data.totalPages}  |  Total: ${data.totalElements}`);
+
+                    page++;
+
+                    if (data.last) {
+                        $("#btnMore").prop("disabled", true).text("No more");
+                    } else {
+                        $("#btnMore").prop("disabled", false).text("More");
+                    }
+                },
+                error: function (resp) {
+                    console.log(resp.status, resp.responseText);
+                    $("#btnMore").prop("disabled", false).text("More");
+                },
+                complete: function () {
+                    loading = false;
+                }
+            });
+        }
+
+        // load trang đầu tiên
+        loadMore();
+
+        // bấm More để lấy thêm 5 record
+        $("#btnMore").on("click", loadMore);
+        function loadCategories() {
+            $.ajax({
+                url: "http://localhost:8080/api/v1/categories",
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    const options = data.map(c =>
+                        `<option value="${c.id}">${c.name}</option>`
+                    ).join("");
+                    $("#category").append(options);
+                }
+            });
+        }
+
+        loadCategories();
+
+    });
+    function loadCategories() {
+        $.ajax({
+            url: "http://localhost:8080/api/v1/categories",
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                const options = data.map(c =>
+                    `<option value="${c.id}">${c.name}</option>`
+                ).join("");
+                $("#categoryId").append(options);
+            }
+        });
+    }
+    loadCategories();
+
+</script>
+
+
+<h1>Footer</h1>
+</body>
+</html>
